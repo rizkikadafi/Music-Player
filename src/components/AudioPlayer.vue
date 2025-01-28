@@ -2,12 +2,12 @@
 import { useTemplateRef, ref, provide } from 'vue'
 import { type AudioContext, AudioContextKey } from '@/composables/audioContext'
 import SeekSlider from '@/components/SeekSlider.vue'
+import VolumeControl from '@/components/VolumeControl.vue';
+import MusicThumbnail from './MusicThumbnail.vue';
 
-const { controls } = defineProps({
-  controls: {
-    type: Boolean,
-    default: false,
-  }
+defineProps({
+  controls: Boolean,
+  src: String
 });
 
 const play = ref(false)
@@ -35,13 +35,14 @@ provide(AudioContextKey, audioContext);
 </script>
 
 <template>
-  <div id="audio-player-container">
-    <p>Audio Player</p>
-    <audio ref="audio" src="/musics/yoasobi-yuusha.mp3" preload="metadata" loop />
-
-    <slot>
-      <SeekSlider v-if="controls" />
+  <div id="audio-player-container" class="px-8 md:px-0 md:w-2/6">
+    <audio ref="audio" :src="src" preload="metadata" loop />
+    <slot name="data">
+      <MusicThumbnail />
     </slot>
-
+    <slot name="controls">
+      <SeekSlider v-if="controls" />
+      <VolumeControl v-if="controls" />
+    </slot>
   </div>
 </template>

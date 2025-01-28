@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import AudioPlayer from '@/components/AudioPlayer.vue';
-import SeekSlider from '@/components/SeekSlider.vue';
-import VolumeControl from '@/components/VolumeControl.vue';
+import ThemeController from './components/ThemeController.vue';
+import IconBack from './components/icons/IconBack.vue';
 </script>
 
 <template>
-  <AudioPlayer controls>
-    <VolumeControl />
-    <SeekSlider />
-  </AudioPlayer>
-</template>
+  <div class="h-screen">
+    <nav class="flex justify-between my-3 mx-3 h-16">
+      <button class="btn btn-square flex justify-center items-center">
+        <IconBack />
+      </button>
+      <ThemeController />
+    </nav>
 
-<style scoped></style>
+    <main class="overflow-x-hidden">
+      <RouterView />
+    </main>
+  </div>
+</template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from 'primevue'
 import { AudioContextKey } from '@/composables/audioContext';
 import type { AnimationItem } from 'lottie-web';
 import Lottie from 'lottie-web';
@@ -45,9 +44,11 @@ function toogleMute() {
 </script>
 
 <template>
-  <output id="volume-output">{{ audioContext!.volume }} %</output>
-    <input @input="volumeHandler" type="range" ref="volume-slider" max="100" value="100">
-    <Button @click="toogleMute">
-      <div ref="mute-icon"></div>
-    </Button>
+  <div class="flex justify-between items-center">
+    <button @click="toogleMute" class="btn btn-primary btn-md">
+      <div ref="mute-icon" class="w-10"></div>
+    </button>
+    <input class="range range-sm mx-3 my-8" @input="volumeHandler" type="range" ref="volume-slider" max="100" value="100">
+    <output id="volume-output" class="px-3">{{ audioContext!.volume }}%</output>
+  </div>
 </template>

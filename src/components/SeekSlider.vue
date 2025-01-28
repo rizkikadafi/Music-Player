@@ -3,15 +3,14 @@ import { computed, inject, onMounted, onUnmounted } from 'vue';
 import { AudioContextKey } from '@/composables/audioContext';
 import { ref, useTemplateRef } from 'vue';
 import calculateTime from '@/utils/calculateTime';
-import type { AnimationItem } from 'lottie-web';
-import Lottie from 'lottie-web';
-import { Button } from 'primevue'
+// import type { AnimationItem } from 'lottie-web';
+// import Lottie from 'lottie-web';
 
 const audioContext = inject(AudioContextKey)
 const seekSliderElement = useTemplateRef<HTMLInputElement>('seek-slider')
-const playIconContainer = useTemplateRef<Element>('play-icon')
-const play = ref(false)
-const playAnimation = ref<AnimationItem | null>(null)
+// const playIconContainer = useTemplateRef<Element>('play-icon')
+// const play = ref(false)
+// const playAnimation = ref<AnimationItem | null>(null)
 
 if (!audioContext) {
   throw new Error('AudioContext is not provided');
@@ -33,16 +32,16 @@ onMounted(() => {
 
   audioContext!.audioElement.value?.addEventListener('timeupdate', updateTimeHandler)
 
-  playAnimation.value = Lottie.loadAnimation({
-    container: playIconContainer.value!,
-    path: '/icons/animation/pause.json',
-    renderer: 'svg',
-    loop: false,
-    autoplay: false,
-    name: "Demo Animation",
-  });
+  // playAnimation.value = Lottie.loadAnimation({
+  //   container: playIconContainer.value!,
+  //   path: '/icons/animation/pause.json',
+  //   renderer: 'svg',
+  //   loop: false,
+  //   autoplay: false,
+  //   name: "Demo Animation",
+  // });
 
-  playAnimation.value.goToAndStop(14, true);
+  // playAnimation.value.goToAndStop(14, true);
 })
 
 onUnmounted(() => {
@@ -62,23 +61,27 @@ function updateTimeHandler() {
   currentTimeHandler()
 }
 
-function tooglePlay() {
-  if (play.value) {
-    audioContext!.audioElement.value?.pause()
-    playAnimation.value?.playSegments([0, 14], true);
-  } else {
-    audioContext!.audioElement.value?.play()
-    playAnimation.value?.playSegments([14, 27], true);
-  }
-  play.value = !play.value
-}
+// function tooglePlay() {
+//   if (play.value) {
+//     audioContext!.audioElement.value?.pause()
+//     playAnimation.value?.playSegments([0, 14], true);
+//   } else {
+//     audioContext!.audioElement.value?.play()
+//     playAnimation.value?.playSegments([14, 27], true);
+//   }
+//   play.value = !play.value
+// }
 </script>
 
 <template>
-  <Button @click="tooglePlay">
-      <div ref="play-icon"></div>
-    </Button>
-  <span id="current-time" class="time mr-3">{{ parsedCurrentTime }}</span>
-  <input id="seek-slider" @change="seekHandler" @input="currentTimeHandler" type="range" ref="seek-slider" max="100" value="0">
-  <span id="duration" class="time mr-3">{{ parsedDuration }}</span>
+  <div class="flex items-center justify-between">
+    <!-- <button @click="tooglePlay" class="btn btn-primary">
+      <div ref="play-icon" class="w-10"></div>
+    </button> -->
+    <span id="current-time" class="time px-4 box-border w-fit">{{ parsedCurrentTime }}</span>
+    <input class="range" id="seek-slider" @change="seekHandler" @input="currentTimeHandler" type="range" ref="seek-slider" max="100"
+      value="0">
+    <span id="duration" class="time px-4">{{ parsedDuration }}</span>
+  </div>
+
 </template>

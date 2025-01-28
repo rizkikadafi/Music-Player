@@ -1,14 +1,24 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
+import { createWebHistory, createRouter } from 'vue-router'
 import App from './App.vue'
-import PrimeVue from 'primevue/config'
-import Aura from '@primevue/themes/aura';
+import HomeView from './views/HomeView.vue'
+import SongsView from './views/SongsView.vue'
+
+const routes = [
+  { path: '/', component: HomeView },
+  { path: '/songs', component: SongsView },
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
 
 const app = createApp(App)
-app.use(PrimeVue, {
-  theme: {
-    preset: Aura
-  },
-})
-app.mount('#app')
+
+app
+  .use(router)
+  .mount('#app')
