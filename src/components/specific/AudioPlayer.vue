@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useTemplateRef, ref, provide } from 'vue'
 import { type AudioContext, AudioContextKey } from '@/composables/audioContext'
-import SeekSlider from '@/components/SeekSlider.vue'
-import VolumeControl from '@/components/VolumeControl.vue';
-import MusicThumbnail from './MusicThumbnail.vue';
+import SeekSlider from '@/components/specific/SeekSlider.vue'
+import VolumeControl from '@/components/specific/VolumeControl.vue';
+import MusicThumbnail from '@/components/specific/MusicThumbnail.vue';
 
 defineProps({
   controls: Boolean,
@@ -29,7 +29,11 @@ const audioContext: AudioContext = {
 
 provide(AudioContextKey, audioContext);
 
-// const bufferedAmount = audioElement.value?.buffered.end(audioElement.value?.buffered.length - 1);
+
+// onMounted(() => {
+//   const bufferedAmount = audioElement.value?.buffered.end(audioElement.value?.buffered.length - 1);
+//   console.log(bufferedAmount)
+// })
 // const seekableAmount = audioElement.value?.seekable.end(audioElement.value?.seekable.length - 1);
 
 </script>
@@ -37,7 +41,7 @@ provide(AudioContextKey, audioContext);
 <template>
   <div id="audio-player-container" class="px-8 md:px-0 md:w-2/6">
     <audio ref="audio" :src="src" preload="metadata" loop />
-    <slot name="data">
+    <slot>
       <MusicThumbnail />
     </slot>
     <slot name="controls">

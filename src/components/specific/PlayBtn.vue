@@ -2,8 +2,8 @@
 import { inject } from 'vue';
 import { AudioContextKey } from '@/composables/audioContext';
 import { ref } from 'vue';
-import IconPause from './icons/IconPause.vue';
-import IconPlay from './icons/IconPlay.vue';
+import IconPause from '@/components/icons/IconPause.vue';
+import IconPlay from '@/components/icons/IconPlay.vue';
 
 const audioContext = inject(AudioContextKey)
 const play = ref(false)
