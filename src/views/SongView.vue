@@ -2,45 +2,61 @@
 import AudioPlayer from '@/components/specific/AudioPlayer.vue';
 import IconSkipBackward from '@/components/icons/IconSkipBackward.vue';
 import IconSkipForward from '@/components/icons/IconSkipForward.vue';
-import PlayBtn from '@/components/specific/PlayBtn.vue';
 import SeekSlider from '@/components/specific/SeekSlider.vue';
-import VolumeControl from '@/components/specific/VolumeControl.vue';
-import type { AnimationItem } from 'lottie-web';
-import Lottie from 'lottie-web';
-import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, useTemplateRef, watch, inject } from 'vue';
 import IconMinimize from '@/components/icons/IconMinimize.vue';
 import MusicThumbnail from '@/components/specific/MusicThumbnail.vue';
+import ThemeController from '@/components/common/ThemeController.vue';
+import { useLottie } from '@/composables/lottie';
+import { AudioContextKey } from '@/composables/audioContext';
+import AudioBtn from '@/components/common/AudioBtn.vue';
+import VolumeSlider from '@/components/specific/VolumeSlider.vue';
 
-const isPlaying = ref(false);
-const playIconContainer = useTemplateRef<Element>('play-icon')
-const playAnimation = ref<AnimationItem | null>(null)
+const audioContext = inject(AudioContextKey)
+
+if (!audioContext) {
+  throw new Error('AudioContext is not provided');
+}
+
+const expandPlayIconContainer = useTemplateRef<Element>('expand-play-icon')
+const miniPlayIconContainer = useTemplateRef<Element>('mini-play-icon')
+const expandMuteIconContainer = useTemplateRef<Element>('expand-mute-icon')
+const miniMuteIconContainer = useTemplateRef<Element>('mini-mute-icon')
 
 const isExpanded = ref(false)
 
-onMounted(() => {
-  playAnimation.value = Lottie.loadAnimation({
-    container: playIconContainer.value!,
-    path: '/icons/animation/pause.json',
-    renderer: 'svg',
-    loop: false,
-    autoplay: false,
-    name: "Play Animation",
-  });
-
-  playAnimation.value.goToAndStop(14, true);
-})
-
-onUnmounted(() => {
-  if (playAnimation.value) {
-    playAnimation.value.destroy();
-  }
+const playLottie = useLottie('/icons/animation/pause.json', {
+  loop: false,
+  autoplay: false,
+  startFrame: 14
 });
 
-watch(isPlaying, (state) => {
+const muteLottie = useLottie('/icons/animation/mute.json', {
+  loop: false,
+  autoplay: false,
+  startFrame: 0
+});
+
+onMounted(() => {
+  playLottie.mountAnimation(expandPlayIconContainer.value!);
+  playLottie.mountAnimation(miniPlayIconContainer.value!);
+  muteLottie.mountAnimation(expandMuteIconContainer.value!);
+  muteLottie.mountAnimation(miniMuteIconContainer.value!)
+})
+
+watch(audioContext.isPlaying, (state) => {
   if (state) {
-    playAnimation.value?.playSegments([14, 27], true);
+    playLottie.playSegments(14, 27);
   } else {
-    playAnimation.value?.playSegments([0, 14], true);
+    playLottie.playSegments(0, 14);
+  }
+})
+
+watch(audioContext.isMuted, (state) => {
+  if (state) {
+    muteLottie.playSegments(0, 15);
+  } else {
+    muteLottie.playSegments(15, 25);
   }
 })
 
@@ -51,35 +67,52 @@ function toogleExpand() {
 
 <template>
   <Transition name="slide-up">
-    <div v-show="isExpanded" class="absolute z-10 top-0 bg-base-100 h-screen">
-      <AudioPlayer class="h-full flex flex-col justify-center" src="/musics/yoasobi-yuusha.mp3">
-        <div class="flex justify-center mb-8">
-          <button @click="toogleExpand">
-            <IconMinimize />
-          </button>
-          <h2 class="mx-3">Now Playing</h2>
-        </div>
-        <MusicThumbnail />
-        <template #controls>
-          <div class="flex justify-center items-center mb-4">
-            <IconSkipBackward class="mx-8" />
-            <PlayBtn v-model="isPlaying">
-              <template #icon>
-                <div ref="play-icon" class="w-10"></div>
-              </template>
-            </PlayBtn>
-            <IconSkipForward class="mx-8" />
-          </div>
-          <SeekSlider />
-          <VolumeControl />
-        </template>
-      </AudioPlayer>
+    <div v-show="isExpanded" class="flex flex-col absolute z-10 top-0 bg-base-100 h-svh">
+      <nav class="flex flex-none justify-between my-3 mx-3 h-16 relative border-b border-b-neutral">
+        <button @click="toogleExpand" class="btn btn-square flex justify-center items-center">
+          <IconMinimize />
+        </button>
+        <h1 class="p-4 text-center font-bold text-lg">VMusic</h1>
+        <ThemeController />
+      </nav>
+
+        <AudioPlayer class="flex flex-auto flex-col justify-center">
+          <h2 class="mb-8 font-bold text-center">Now Playing</h2>
+          <MusicThumbnail />
+          <template #controls>
+            <div class="flex justify-center items-center mb-4">
+              <IconSkipBackward class="mx-8" />
+              <AudioBtn action="togglePlay" class="btn btn-primary">
+                <div ref="expand-play-icon" class="w-10"></div>
+              </AudioBtn>
+              <IconSkipForward class="mx-8" />
+            </div>
+            <SeekSlider />
+            <div class="hidden">
+              <AudioBtn action="toggleMute" class="btn btn-primary">
+                <div ref="expand-mute-icon" class="w-10"></div>
+              </AudioBtn>
+              <VolumeSlider />
+            </div>
+          </template>
+        </AudioPlayer>
     </div>
   </Transition>
 
-
-  <button @click="toogleExpand" class="h-16 block w-full bg-base-200">
-    <p>Music</p>
+  <button @click="toogleExpand" class="block w-full bg-base-200 pt-5">
+    <AudioPlayer>
+      <template #controls>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center">
+            <img src="/image/thumb.jpg" alt="song thumb" width="80" height="80">
+            <h2 class="font-bold mx-3">Song title</h2>
+          </div>
+          <AudioBtn action="togglePlay" class="btn btn-primary">
+            <div ref="mini-play-icon" class="w-10"></div>
+          </AudioBtn>
+        </div>
+      </template>
+    </AudioPlayer>
   </button>
 </template>
 

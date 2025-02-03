@@ -1,33 +1,28 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { inject } from 'vue';
 import { AudioContextKey } from '@/composables/audioContext';
-import { ref } from 'vue';
 import IconPause from '@/components/icons/IconPause.vue';
 import IconPlay from '@/components/icons/IconPlay.vue';
 
 const audioContext = inject(AudioContextKey)
-const play = ref(false)
-const model = defineModel()
 
 if (!audioContext) {
   throw new Error('AudioContext is not provided');
 }
 
 function tooglePlay() {
-  model.value = !model.value
-  if (play.value) {
-    audioContext!.audioElement.value?.pause()
+  if (audioContext?.isPlaying.value) {
+    audioContext?.pause()
   } else {
-    audioContext!.audioElement.value?.play()
+    audioContext?.play()
   }
-  play.value = !play.value
 }
 </script>
 
 <template>
-  <button @click="tooglePlay" class="btn btn-primary">
+  <button @click.stop="tooglePlay" class="btn btn-primary">
     <slot name="icon">
-      <span v-if="play">
+      <span v-if="audioContext.isPlaying.value">
         <IconPlay />
       </span>
       <span v-else>
@@ -35,4 +30,30 @@ function tooglePlay() {
       </span>
     </slot>
   </button>
+</template> -->
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import IconPause from '@/components/icons/IconPause.vue';
+import IconPlay from '@/components/icons/IconPlay.vue';
+import AudioBtn from '../common/AudioBtn.vue';
+
+const play = ref(false);
+
+function toggle() {
+  play.value = !play.value;
+}
+</script>
+
+<template>
+  <AudioBtn action="togglePlay" @click.stop="toggle" class="btn btn-primary">
+    <template #default="{ isPlaying }">
+      <span v-if="isPlaying">
+        <IconPause />
+      </span>
+      <span v-else>
+        <IconPlay />
+      </span>
+    </template>
+  </AudioBtn>
 </template>
