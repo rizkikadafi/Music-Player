@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import IconTheme from '@/components/icons/IconTheme.vue';
-
-
 </script>
+
 <template>
   <div class="dropdown dropdown-end mb-72">
     <div tabindex="0" role="button" class="btn m-1">

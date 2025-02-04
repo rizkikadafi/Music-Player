@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ThemeController from './components/common/ThemeController.vue';
-import IconBack from './components/icons/IconBack.vue';
-import SongView from './views/SongView.vue';
-import AudioProvider from './components/specific/AudioProvider.vue';
+import ThemeController from '@/components/common/ThemeController.vue';
+import IconBack from '@/components/icons/IconBack.vue';
+import SongView from '@/views/SongView.vue';
+import AudioProvider from '@/components/specific/AudioProvider.vue';
 
 </script>
 
@@ -15,7 +15,7 @@ import AudioProvider from './components/specific/AudioProvider.vue';
       <h1 class="self-center font-bold text-lg absolute left-1/2 -translate-x-1/2">VMusic</h1>
       <ThemeController />
     </nav>
-    <main class="overflow-x-hidden flex flex-auto flex-col justify-center">
+    <main class="overflow-x-hidden flex-auto">
       <RouterView />
     </main>
     <div class="music-control flex-none">

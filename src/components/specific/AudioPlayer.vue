@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import SeekSlider from '@/components/specific/SeekSlider.vue'
-import VolumeControl from '@/components/specific/VolumeControl.vue';
 
 defineProps({
   controls: Boolean,
