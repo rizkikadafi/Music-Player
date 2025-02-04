@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, watch } from 'vue';
+import { computed, inject, watch } from 'vue';
 import { AudioContextKey } from '@/composables/audioContext';
 import { useTemplateRef } from 'vue';
 import calculateTime from '@/utils/calculateTime';
@@ -19,14 +19,13 @@ const parsedDuration = computed(() => {
   return calculateTime(audioContext!.duration.value)
 })
 
-onMounted(() => {
-  audioContext.audioElement!.value?.addEventListener('loadedmetadata', () => {
-    seekSliderElement.value!.max = Math.floor(audioContext!.duration.value).toString();
-  })
-})
+watch(audioContext.duration, (newDuration) => {
+  if (seekSliderElement.value) {
+    seekSliderElement.value.max = Math.floor(newDuration).toString();
+  }
+});
 
 watch(audioContext!.currentTime, (currentTime) => {
-  console.log(Math.floor(currentTime).toString())
   seekSliderElement.value!.value = Math.floor(currentTime).toString()
 });
 
@@ -38,7 +37,7 @@ function seekHandler() {
 <template>
   <div class="flex items-center justify-between">
     <span id="current-time" class="time px-4 box-border w-fit">{{ parsedCurrentTime }}</span>
-    <input v-bind="$attrs" class="range" id="seek-slider" @change="seekHandler" type="range" ref="seek-slider" max="100" value="0">
+    <input :class="$attrs.class" class="range" id="seek-slider" @change="seekHandler" type="range" ref="seek-slider" max="100" value="0">
     <span id="duration" class="time px-4">{{ parsedDuration }}</span>
   </div>
 

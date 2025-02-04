@@ -87,7 +87,7 @@ function toogleExpand() {
               </AudioBtn>
               <IconSkipForward class="mx-8" />
             </div>
-            <SeekSlider />
+            <SeekSlider class="range-sm" />
             <div class="hidden">
               <AudioBtn action="toggleMute" class="btn btn-primary">
                 <div ref="expand-mute-icon" class="w-10"></div>
